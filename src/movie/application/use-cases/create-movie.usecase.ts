@@ -19,12 +19,11 @@ export class CreateMovieUsecase {
     genre: string,
     cast?: string[],
   ): Promise<Movie> {
-
     if (cast == undefined) {
-        cast = [];
+      cast = [];
     }
 
-    const movie = new Movie("", title, director, releaseDate, genre, cast);
+    const movie = new Movie(null, title, director, releaseDate, genre, cast);
     return await this.movieRepository.create(movie);
   }
 }

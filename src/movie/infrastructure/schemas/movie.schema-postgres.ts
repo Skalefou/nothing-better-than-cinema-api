@@ -24,14 +24,16 @@ export class MoviePostgresSchema implements Movie {
   cast: string[];
 
   constructor(
-    id: string,
+    id: string | null,
     title: string,
     director: string,
     releaseDate: Date,
     genre: string,
     cast: string[],
   ) {
-    this.id = id;
+    if (id) {
+      this.id = id;
+    }
     this.title = title;
     this.director = director;
     this.releaseDate = releaseDate;
