@@ -17,8 +17,13 @@ export class CreateMovieUsecase {
     director: string,
     releaseDate: Date,
     genre: string,
-    cast: string[],
+    cast?: string[],
   ): Promise<Movie> {
+
+    if (cast == undefined) {
+        cast = [];
+    }
+
     const movie = new Movie("", title, director, releaseDate, genre, cast);
     return await this.movieRepository.create(movie);
   }

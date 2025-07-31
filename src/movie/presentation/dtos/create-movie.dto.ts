@@ -1,4 +1,4 @@
-import { IsDate, IsNotEmpty, IsString } from "class-validator";
+import {IsDateString, IsNotEmpty, IsOptional, IsString} from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateMovieDTO {
@@ -13,7 +13,7 @@ export class CreateMovieDTO {
   director: string;
 
   @IsNotEmpty()
-  @IsDate()
+  @IsDateString()
   @ApiProperty({ example: "1968-04-02" })
   releaseDate: Date;
 
@@ -22,6 +22,7 @@ export class CreateMovieDTO {
   @ApiProperty({ example: "Science Fiction" })
   genre: string;
 
+  @IsOptional()
   @IsString({ each: true })
   @ApiProperty({
     example: ["Keir Dullea", "Gary Lockwood", "William Sylvester"],
