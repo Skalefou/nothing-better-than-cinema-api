@@ -2,25 +2,25 @@ import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
 import { Movie } from "../../domain/entities/movie.entity";
 import { Injectable } from "@nestjs/common";
 
-@Entity()
+@Entity("movies")
 @Injectable()
 export class MoviePostgresSchema implements Movie {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column()
+  @Column({ length: 255, nullable: false })
   title: string;
 
-  @Column()
+  @Column({ length: 255, nullable: false })
   director: string;
 
-  @Column()
+  @Column({ type: "date", nullable: false })
   releaseDate: Date;
 
-  @Column()
+  @Column({ length: 50, nullable: false })
   genre: string;
 
-  @Column("simple-array")
+  @Column({ type: "simple-array", nullable: true })
   cast: string[];
 
   constructor(
