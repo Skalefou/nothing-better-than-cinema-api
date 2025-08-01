@@ -6,7 +6,7 @@ import { MovieRepository } from "../../domain/repositories/movie.repository";
 import { MoviePostgresSchema } from "../schemas/movie.schema-postgres";
 
 @Injectable()
-export class PostgresMovieRepository implements MovieRepository {
+export class MoviePostgresRepository implements MovieRepository {
   constructor(
     @InjectRepository(MoviePostgresSchema)
     private readonly movieRepository: Repository<MoviePostgresSchema>,

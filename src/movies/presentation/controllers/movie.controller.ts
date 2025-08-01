@@ -3,7 +3,7 @@ import { CreateMovieUsecase } from "../../application/use-cases/create-movie.use
 import { Movie } from "../../domain/entities/movie.entity";
 import { CreateMovieDTO } from "../dtos/create-movie.dto";
 
-@Controller("movie")
+@Controller("movies")
 export class MovieController {
   constructor(private readonly createMovieUsecase: CreateMovieUsecase) {}
 

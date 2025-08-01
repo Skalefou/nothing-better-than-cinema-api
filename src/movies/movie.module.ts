@@ -2,7 +2,7 @@ import { Module } from "@nestjs/common";
 import { MovieController } from "./presentation/controllers/movie.controller";
 import { CreateMovieUsecase } from "./application/use-cases/create-movie.usecase";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { PostgresMovieRepository } from "./infrastructure/repositories/postgres-movie.repository";
+import { MoviePostgresRepository } from "./infrastructure/repositories/movie.postgres-repository";
 import { MOVIE_REPOSITORY } from "./domain/repositories/movie.repository";
 import { MoviePostgresSchema } from "./infrastructure/schemas/movie.schema-postgres";
 
@@ -13,7 +13,7 @@ import { MoviePostgresSchema } from "./infrastructure/schemas/movie.schema-postg
     CreateMovieUsecase,
     {
       provide: MOVIE_REPOSITORY,
-      useClass: PostgresMovieRepository,
+      useClass: MoviePostgresRepository,
     },
   ],
   exports: [TypeOrmModule],
