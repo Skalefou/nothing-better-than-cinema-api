@@ -7,15 +7,15 @@ import { MOVIE_REPOSITORY } from "./domain/repositories/movie.repository";
 import { MoviePostgresSchema } from "./infrastructure/schemas/movie.schema-postgres";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([MoviePostgresSchema])],
-  controllers: [MovieController],
-  providers: [
-    CreateMovieUsecase,
-    {
-      provide: MOVIE_REPOSITORY,
-      useClass: MoviePostgresRepository,
-    },
-  ],
-  exports: [TypeOrmModule],
+    imports: [TypeOrmModule.forFeature([MoviePostgresSchema])],
+    controllers: [MovieController],
+    providers: [
+        CreateMovieUsecase,
+        {
+            provide: MOVIE_REPOSITORY,
+            useClass: MoviePostgresRepository,
+        },
+    ],
+    exports: [TypeOrmModule],
 })
 export class MovieModule {}

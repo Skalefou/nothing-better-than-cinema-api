@@ -5,26 +5,31 @@ import { JwtTokenService } from "./application/services/jwt-token.service";
 import { ConfigService } from "@nestjs/config";
 
 @Module({
-  imports: [
-    JwtModule.registerAsync({
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>("JWT_SECRET"),
-        signOptions: {
-          expiresIn: configService.get<string>("JWT_ACCESS_EXPIRES_IN", "15m"),
+    imports: [
+        JwtModule.registerAsync({
+            inject: [ConfigService],
+            useFactory: (configService: ConfigService) => ({
+                secret: configService.get<string>("JWT_SECRET"),
+                signOptions: {
+                    expiresIn: configService.get<string>(
+                        "JWT_ACCESS_EXPIRES_IN",
+                        "15m",
+                    ),
+                },
+            }),
+        }),
+    ],
+    providers: [
+        JwtTokenServiceImpl,
+        {
+            provide: JwtTokenService,
+            useFactory: (
+                impl: JwtTokenServiceImpl,
+                configService: ConfigService,
+            ) => new JwtTokenService(impl, configService),
+            inject: [JwtTokenServiceImpl, ConfigService],
         },
-      }),
-    }),
-  ],
-  providers: [
-    JwtTokenServiceImpl,
-    {
-      provide: JwtTokenService,
-      useFactory: (impl: JwtTokenServiceImpl, configService: ConfigService) =>
-        new JwtTokenService(impl, configService),
-      inject: [JwtTokenServiceImpl, ConfigService],
-    },
-  ],
-  exports: [JwtTokenService],
+    ],
+    exports: [JwtTokenService],
 })
 export class AuthModule {}

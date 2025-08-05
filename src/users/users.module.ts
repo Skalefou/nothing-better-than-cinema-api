@@ -8,21 +8,23 @@ import { UsersSchemaPostgres } from "./infrastructure/schemas/users.schema-postg
 import { USERS_REPOSITORY } from "./domain/repositories/users.repository";
 import { UsersPostgresRepository } from "./infrastructure/repositories/users.postgres-repository";
 import { AuthModule } from "../auth/auth.module";
+import { LoginUsersUseCase } from "./application/use-cases/login-users.use-case";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UsersSchemaPostgres]), AuthModule],
-  controllers: [UsersController],
-  providers: [
-    RegisterUsersUseCase,
-    {
-      provide: HASH_PASSWORD_SERVICE,
-      useClass: BcryptHashPasswordService,
-    },
-    {
-      provide: USERS_REPOSITORY,
-      useClass: UsersPostgresRepository,
-    },
-  ],
-  exports: [TypeOrmModule],
+    imports: [TypeOrmModule.forFeature([UsersSchemaPostgres]), AuthModule],
+    controllers: [UsersController],
+    providers: [
+        RegisterUsersUseCase,
+        LoginUsersUseCase,
+        {
+            provide: HASH_PASSWORD_SERVICE,
+            useClass: BcryptHashPasswordService,
+        },
+        {
+            provide: USERS_REPOSITORY,
+            useClass: UsersPostgresRepository,
+        },
+    ],
+    exports: [TypeOrmModule],
 })
 export class UsersModule {}
