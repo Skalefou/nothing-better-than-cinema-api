@@ -6,7 +6,7 @@ import { JwtService } from "@nestjs/jwt";
 export class JwtTokenServiceImpl implements JwtServicePort {
   constructor(private readonly jwt: JwtService) {}
 
-  sign(payload: object): Promise<string> {
-    return this.jwt.signAsync(payload);
+  sign(payload: object, options?: object): Promise<string> {
+    return this.jwt.signAsync(payload, options);
   }
 }

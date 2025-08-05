@@ -7,9 +7,10 @@ import { BcryptHashPasswordService } from "./infrastructure/services/BcryptHashP
 import { UsersSchemaPostgres } from "./infrastructure/schemas/users.schema-postgres";
 import { USERS_REPOSITORY } from "./domain/repositories/users.repository";
 import { UsersPostgresRepository } from "./infrastructure/repositories/users.postgres-repository";
+import { AuthModule } from "../auth/auth.module";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UsersSchemaPostgres])],
+  imports: [TypeOrmModule.forFeature([UsersSchemaPostgres]), AuthModule],
   controllers: [UsersController],
   providers: [
     RegisterUsersUseCase,

@@ -1,3 +1,3 @@
 export interface JwtServicePort {
-  sign(payload: object): Promise<string>;
+  sign(payload: object, options?: object): Promise<string>;
 }

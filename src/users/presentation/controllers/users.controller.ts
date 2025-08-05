@@ -8,13 +8,24 @@ export class UsersController {
   constructor(private readonly registerUsersUseCase: RegisterUsersUseCase) {}
 
   @Post("register")
-  async registerUser(
-    @Body() registerUserInput: RegisterUsersDto,
-  ): Promise<SanitarizedUsersDTO> {
-    const newUser = await this.registerUsersUseCase.execute(
+  async registerUser(@Body() registerUserInput: RegisterUsersDto): Promise<{
+    user: SanitarizedUsersDTO;
+    accessToken: string;
+    refreshToken: string;
+  }> {
+    const {
+      user: newUser,
+      accessToken,
+      refreshToken,
+    } = await this.registerUsersUseCase.execute(
       registerUserInput.email,
       registerUserInput.password,
     );
-    return new SanitarizedUsersDTO(newUser);
+
+    return {
+      user: new SanitarizedUsersDTO(newUser),
+      accessToken,
+      refreshToken,
+    };
   }
 }
