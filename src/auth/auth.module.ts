@@ -11,10 +11,7 @@ import { ConfigService } from "@nestjs/config";
             useFactory: (configService: ConfigService) => ({
                 secret: configService.get<string>("JWT_SECRET"),
                 signOptions: {
-                    expiresIn: configService.get<string>(
-                        "JWT_ACCESS_EXPIRES_IN",
-                        "15m",
-                    ),
+                    expiresIn: configService.get<string>("JWT_ACCESS_EXPIRES_IN", "15m"),
                 },
             }),
         }),
@@ -23,10 +20,8 @@ import { ConfigService } from "@nestjs/config";
         JwtTokenServiceImpl,
         {
             provide: JwtTokenService,
-            useFactory: (
-                impl: JwtTokenServiceImpl,
-                configService: ConfigService,
-            ) => new JwtTokenService(impl, configService),
+            useFactory: (impl: JwtTokenServiceImpl, configService: ConfigService) =>
+                new JwtTokenService(impl, configService),
             inject: [JwtTokenServiceImpl, ConfigService],
         },
     ],

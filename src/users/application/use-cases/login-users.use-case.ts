@@ -1,9 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { Users } from "../../domain/entities/users.entity";
-import {
-    USERS_REPOSITORY,
-    UsersRepository,
-} from "../../domain/repositories/users.repository";
+import { USERS_REPOSITORY, UsersRepository } from "../../domain/repositories/users.repository";
 import { InvalidEmailException } from "../../domain/exceptions/InvalidEmail.exception";
 import {
     HASH_PASSWORD_SERVICE,
@@ -23,12 +20,12 @@ export class LoginUsersUseCase {
         @Inject(HASH_PASSWORD_SERVICE)
         private readonly hashPasswordService: HashPasswordService,
 
-        private readonly jwtTokenService: JwtTokenService,
+        private readonly jwtTokenService: JwtTokenService
     ) {}
 
     async execute(
         email: string,
-        password: string,
+        password: string
     ): Promise<{
         user: Users;
         accessToken: string;
@@ -45,7 +42,7 @@ export class LoginUsersUseCase {
 
         const isPasswordValid = await this.hashPasswordService.comparePassword(
             password,
-            user.password,
+            user.password
         );
         if (!isPasswordValid) {
             throw new InvalidPasswordException();
@@ -56,9 +53,7 @@ export class LoginUsersUseCase {
             this.jwtTokenService.generateRefreshToken(user.id),
         ]);
 
-        const returnUser = await this.usersRepository.updateLastLoginDate(
-            user.id,
-        );
+        const returnUser = await this.usersRepository.updateLastLoginDate(user.id);
         if (!returnUser) {
             throw new InternalServerErrorUsersException();
         }

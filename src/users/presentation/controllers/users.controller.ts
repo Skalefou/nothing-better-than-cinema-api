@@ -1,7 +1,6 @@
 import { Controller, Post, Body } from "@nestjs/common";
 import { RegisterUsersUseCase } from "../../application/use-cases/register-users.use-case";
 import { LoginUsersUseCase } from "../../application/use-cases/login-users.use-case";
-import { Users } from "../../domain/entities/users.entity";
 import { LoginUsersDTO } from "../dtos/LoginUsers.dto";
 import { RegisterUsersDTO } from "../dtos/RegisterUsers.dto";
 import { SanitarizedUsersDTO } from "../dtos/SanitarizedUsers.dto";
@@ -10,7 +9,7 @@ import { SanitarizedUsersDTO } from "../dtos/SanitarizedUsers.dto";
 export class UsersController {
     constructor(
         private readonly registerUsersUseCase: RegisterUsersUseCase,
-        private readonly loginUsersUseCase: LoginUsersUseCase,
+        private readonly loginUsersUseCase: LoginUsersUseCase
     ) {}
 
     @Post("register")
@@ -25,7 +24,7 @@ export class UsersController {
             refreshToken,
         } = await this.registerUsersUseCase.execute(
             registerUserInput.email,
-            registerUserInput.password,
+            registerUserInput.password
         );
 
         return {
@@ -45,10 +44,7 @@ export class UsersController {
             user: loggedUser,
             accessToken,
             refreshToken,
-        } = await this.loginUsersUseCase.execute(
-            loginUserInput.email,
-            loginUserInput.password,
-        );
+        } = await this.loginUsersUseCase.execute(loginUserInput.email, loginUserInput.password);
         return {
             user: new SanitarizedUsersDTO(loggedUser),
             accessToken,

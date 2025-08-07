@@ -10,7 +10,7 @@ async function bootstrap() {
             transform: true,
             whitelist: true,
             forbidNonWhitelisted: true,
-        }),
+        })
     );
     const configService = app.get(ConfigService);
     const port = configService.get<number>("PORT", 8080);

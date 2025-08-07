@@ -5,6 +5,6 @@ export class Movie {
         public readonly director: string,
         public readonly releaseDate: Date,
         public readonly genre: string,
-        public readonly cast: string[],
+        public readonly cast: string[]
     ) {}
 }

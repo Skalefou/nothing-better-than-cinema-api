@@ -9,7 +9,7 @@ import { MoviePostgresSchema } from "../schemas/movie.schema-postgres";
 export class MoviePostgresRepository implements MovieRepository {
     constructor(
         @InjectRepository(MoviePostgresSchema)
-        private readonly movieRepository: Repository<MoviePostgresSchema>,
+        private readonly movieRepository: Repository<MoviePostgresSchema>
     ) {}
 
     private toSchema(movie: Movie): MoviePostgresSchema {
@@ -19,7 +19,7 @@ export class MoviePostgresRepository implements MovieRepository {
             movie.director,
             movie.releaseDate,
             movie.genre,
-            movie.cast,
+            movie.cast
         );
     }
 
@@ -30,7 +30,7 @@ export class MoviePostgresRepository implements MovieRepository {
             schema.director,
             schema.releaseDate,
             schema.genre,
-            schema.cast,
+            schema.cast
         );
     }
 

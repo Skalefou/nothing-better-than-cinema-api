@@ -1,10 +1,9 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { Injectable } from "@nestjs/common";
-import { Users } from "../../domain/entities/users.entity";
 
 @Entity("users")
 @Injectable()
-export class UsersSchemaPostgres implements Users {
+export class UsersSchemaPostgres {
     @PrimaryGeneratedColumn("uuid")
     public readonly id: string;
 
@@ -22,14 +21,14 @@ export class UsersSchemaPostgres implements Users {
         type: "timestamp",
         default: () => "CURRENT_TIMESTAMP",
     })
-    public readonly registerDate?: Date;
+    public readonly register_date?: Date;
 
     @Column({
         name: "last_login_date",
         type: "timestamp",
         default: () => "CURRENT_TIMESTAMP",
     })
-    public readonly lastLoginDate?: Date;
+    public readonly last_login_date?: Date;
 
     constructor(
         id: string | null,
@@ -37,7 +36,7 @@ export class UsersSchemaPostgres implements Users {
         role: string[],
         password: string | null,
         registerDate?: Date,
-        lastLoginDate?: Date,
+        lastLoginDate?: Date
     ) {
         if (id) {
             this.id = id;
@@ -45,9 +44,7 @@ export class UsersSchemaPostgres implements Users {
         this.email = email;
         this.role = role;
         this.password = password;
-        this.registerDate = registerDate ? new Date(registerDate) : undefined;
-        this.lastLoginDate = lastLoginDate
-            ? new Date(lastLoginDate)
-            : undefined;
+        this.register_date = registerDate ? new Date(registerDate) : undefined;
+        this.last_login_date = lastLoginDate ? new Date(lastLoginDate) : undefined;
     }
 }

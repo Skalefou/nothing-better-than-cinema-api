@@ -29,7 +29,7 @@ export class MoviePostgresSchema implements Movie {
         director: string,
         releaseDate: Date,
         genre: string,
-        cast: string[],
+        cast: string[]
     ) {
         if (id) {
             this.id = id;

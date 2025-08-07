@@ -9,7 +9,7 @@ import { Users } from "src/users/domain/entities/users.entity";
 export class UsersPostgresRepository implements UsersRepository {
     constructor(
         @InjectRepository(UsersSchemaPostgres)
-        private readonly movieRepository: Repository<UsersSchemaPostgres>,
+        private readonly movieRepository: Repository<UsersSchemaPostgres>
     ) {}
 
     private toEntity(userSchema: UsersSchemaPostgres): Users {
@@ -18,12 +18,8 @@ export class UsersPostgresRepository implements UsersRepository {
             userSchema.email,
             userSchema.role,
             userSchema.password as string,
-            userSchema.registerDate
-                ? new Date(userSchema.registerDate)
-                : undefined,
-            userSchema.lastLoginDate
-                ? new Date(userSchema.lastLoginDate)
-                : undefined,
+            userSchema.register_date ? new Date(userSchema.register_date) : undefined,
+            userSchema.last_login_date ? new Date(userSchema.last_login_date) : undefined
         );
     }
 
@@ -34,23 +30,20 @@ export class UsersPostgresRepository implements UsersRepository {
             user.role,
             user.password,
             user.registerDate,
-            user.lastLoginDate,
+            user.lastLoginDate
         );
     }
 
     async create(user: Users): Promise<Users> {
         const userSchema = this.toSchema(user);
-        return this.movieRepository
-            .save(userSchema)
-            .then((savedUser) => this.toEntity(savedUser));
+        return this.movieRepository.save(userSchema).then((savedUser) => this.toEntity(savedUser));
     }
 
     async findByEmail(email: string): Promise<Users | null> {
-        const users: UsersSchemaPostgres[] =
-            await this.movieRepository.manager.query(
-                'SELECT * FROM "users" WHERE email = $1 LIMIT 1',
-                [email],
-            );
+        const users: UsersSchemaPostgres[] = await this.movieRepository.manager.query(
+            'SELECT * FROM "users" WHERE email = $1 LIMIT 1',
+            [email]
+        );
         if (users.length === 0) return null;
         return this.toEntity(users[0]);
     }
@@ -59,13 +52,12 @@ export class UsersPostgresRepository implements UsersRepository {
         const now = new Date();
         await this.movieRepository.manager.query(
             'UPDATE "users" SET "last_login_date" = $1 WHERE "id" = $2',
-            [now, userId],
+            [now, userId]
         );
-        const users: UsersSchemaPostgres[] =
-            await this.movieRepository.manager.query(
-                'SELECT * FROM "users" WHERE "id" = $1 LIMIT 1',
-                [userId],
-            );
+        const users: UsersSchemaPostgres[] = await this.movieRepository.manager.query(
+            'SELECT * FROM "users" WHERE "id" = $1 LIMIT 1',
+            [userId]
+        );
         if (!users || users.length === 0) return null;
         return this.toEntity(users[0]);
     }

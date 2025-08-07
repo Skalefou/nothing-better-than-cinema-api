@@ -1,9 +1,6 @@
 import { Users } from "../../domain/entities/users.entity";
 import { Inject, Injectable } from "@nestjs/common";
-import {
-    USERS_REPOSITORY,
-    UsersRepository,
-} from "../../domain/repositories/users.repository";
+import { USERS_REPOSITORY, UsersRepository } from "../../domain/repositories/users.repository";
 import { ExistingEmailException } from "../../domain/exceptions/ExistingEmail.exception";
 import { InvalidEmailException } from "../../domain/exceptions/InvalidEmail.exception";
 import { InvalidPasswordException } from "../../domain/exceptions/InvalidPassword.exception";
@@ -23,7 +20,7 @@ export class RegisterUsersUseCase {
         @Inject(HASH_PASSWORD_SERVICE)
         private readonly hashPasswordService: HashPasswordService,
 
-        private readonly jwtTokenService: JwtTokenService,
+        private readonly jwtTokenService: JwtTokenService
     ) {}
 
     private isValidEmail(email: string): boolean {
@@ -41,7 +38,7 @@ export class RegisterUsersUseCase {
 
     async execute(
         email: string,
-        password: string,
+        password: string
     ): Promise<{ user: Users; accessToken: string; refreshToken: string }> {
         if (!this.isValidEmail(email)) {
             throw new InvalidEmailException();
@@ -56,17 +53,9 @@ export class RegisterUsersUseCase {
             throw new ExistingEmailException();
         }
 
-        const hashedPassword =
-            await this.hashPasswordService.hashPassword(password);
+        const hashedPassword = await this.hashPasswordService.hashPassword(password);
 
-        const user = new Users(
-            null,
-            email,
-            ["users"],
-            hashedPassword,
-            undefined,
-            undefined,
-        );
+        const user = new Users(null, email, ["users"], hashedPassword, undefined, undefined);
         const newUser = await this.usersRepository.create(user);
         if (!newUser.id) {
             throw new CreatingUserException();

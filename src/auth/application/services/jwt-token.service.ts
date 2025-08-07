@@ -6,26 +6,20 @@ export class JwtTokenService {
 
     constructor(
         private readonly jwtTokenService: JwtServicePort,
-        configService: ConfigService,
+        configService: ConfigService
     ) {
         this.configService = configService;
     }
 
-    async generateAccessToken(
-        userId: string,
-        roles: string[],
-    ): Promise<string> {
+    async generateAccessToken(userId: string, roles: string[]): Promise<string> {
         return this.jwtTokenService.sign(
             {
                 sub: userId,
                 roles,
             },
             {
-                expiresIn: this.configService.get<string>(
-                    "JWT_ACCESS_EXPIRES_IN",
-                    "15m",
-                ),
-            },
+                expiresIn: this.configService.get<string>("JWT_ACCESS_EXPIRES_IN", "15m"),
+            }
         );
     }
 
@@ -33,11 +27,8 @@ export class JwtTokenService {
         return this.jwtTokenService.sign(
             { sub: userId },
             {
-                expiresIn: this.configService.get<string>(
-                    "JWT_REFRESH_EXPIRES_IN",
-                    "60d",
-                ),
-            },
+                expiresIn: this.configService.get<string>("JWT_REFRESH_EXPIRES_IN", "60d"),
+            }
         );
     }
 }
