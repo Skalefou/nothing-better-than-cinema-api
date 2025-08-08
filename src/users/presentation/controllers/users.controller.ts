@@ -4,6 +4,7 @@ import { LoginUsersUseCase } from "../../application/use-cases/login-users.use-c
 import { LoginUsersDTO } from "../dtos/LoginUsers.dto";
 import { RegisterUsersDTO } from "../dtos/RegisterUsers.dto";
 import { SanitarizedUsersDTO } from "../dtos/SanitarizedUsers.dto";
+import { IsPublic } from "../../../auth/presentation/decorators/public.decorator";
 
 @Controller("user")
 export class UsersController {
@@ -13,6 +14,7 @@ export class UsersController {
     ) {}
 
     @Post("register")
+    @IsPublic()
     async registerUser(@Body() registerUserInput: RegisterUsersDTO): Promise<{
         user: SanitarizedUsersDTO;
         accessToken: string;
@@ -35,6 +37,7 @@ export class UsersController {
     }
 
     @Post("login")
+    @IsPublic()
     async loginUser(@Body() loginUserInput: LoginUsersDTO): Promise<{
         user: SanitarizedUsersDTO;
         accessToken: string;
