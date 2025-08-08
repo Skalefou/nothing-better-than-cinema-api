@@ -10,7 +10,7 @@ export class UsersSchemaPostgres {
     @Column({ type: "varchar", length: 320, unique: true })
     public readonly email: string;
 
-    @Column("simple-array")
+    @Column({ type: "jsonb", default: () => "'[]'" })
     public readonly role: string[];
 
     @Column({ type: "varchar", length: 64, nullable: false })
