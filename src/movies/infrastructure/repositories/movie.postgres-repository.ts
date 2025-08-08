@@ -39,4 +39,8 @@ export class MoviePostgresRepository implements MovieRepository {
         const savedSchema = await this.movieRepository.save(movieSchema);
         return this.toDomain(savedSchema);
     }
+
+    async delete(id: string): Promise<void> {
+        await this.movieRepository.delete(id);
+    }
 }
