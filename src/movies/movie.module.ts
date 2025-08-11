@@ -6,6 +6,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { MoviePostgresRepository } from "./infrastructure/repositories/movie.postgres-repository";
 import { MOVIE_REPOSITORY } from "./domain/repositories/movie.repository";
 import { MoviePostgresSchema } from "./infrastructure/schemas/movie.schema-postgres";
+import { UpdateMovieUsecase } from "./application/use-cases/update-movie.usecase";
 
 @Module({
     imports: [TypeOrmModule.forFeature([MoviePostgresSchema])],
@@ -13,6 +14,7 @@ import { MoviePostgresSchema } from "./infrastructure/schemas/movie.schema-postg
     providers: [
         CreateMovieUsecase,
         DeleteMovieUsecase,
+        UpdateMovieUsecase,
         {
             provide: MOVIE_REPOSITORY,
             useClass: MoviePostgresRepository,

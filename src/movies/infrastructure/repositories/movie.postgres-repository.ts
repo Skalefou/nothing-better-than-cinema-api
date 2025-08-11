@@ -34,6 +34,14 @@ export class MoviePostgresRepository implements MovieRepository {
         );
     }
 
+    async findById(id: string): Promise<Movie | null> {
+        return await this.movieRepository
+            .findOne({
+                where: { id },
+            })
+            .then((schema) => (schema ? this.toDomain(schema) : null));
+    }
+
     async create(movie: Movie): Promise<Movie> {
         const movieSchema = this.toSchema(movie);
         const savedSchema = await this.movieRepository.save(movieSchema);
@@ -42,5 +50,11 @@ export class MoviePostgresRepository implements MovieRepository {
 
     async delete(id: string): Promise<void> {
         await this.movieRepository.delete(id);
+    }
+
+    async update(movie: Movie): Promise<Movie> {
+        const movieSchema = this.toSchema(movie);
+        const updatedSchema = await this.movieRepository.save(movieSchema);
+        return this.toDomain(updatedSchema);
     }
 }
