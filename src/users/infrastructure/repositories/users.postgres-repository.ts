@@ -39,6 +39,14 @@ export class UsersPostgresRepository implements UsersRepository {
         return this.movieRepository.save(userSchema).then((savedUser) => this.toEntity(savedUser));
     }
 
+    async findById(id: string): Promise<Users | null> {
+        return this.movieRepository
+            .findOne({
+                where: { id },
+            })
+            .then((userSchema) => (userSchema ? this.toEntity(userSchema) : null));
+    }
+
     async findByEmail(email: string): Promise<Users | null> {
         const users: UsersSchemaPostgres[] = await this.movieRepository.manager.query(
             'SELECT * FROM "users" WHERE email = $1 LIMIT 1',

@@ -1,8 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { Injectable } from "@nestjs/common";
 
 @Entity("users")
-@Injectable()
 export class UsersSchemaPostgres {
     @PrimaryGeneratedColumn("uuid")
     public readonly id: string;
