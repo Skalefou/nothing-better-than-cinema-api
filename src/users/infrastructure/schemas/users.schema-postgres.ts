@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import { MovieTheaterImageSchemaPostgres } from "../../../movieTheater/infrastructure/schemas/movieTheater-image.schema-postgres";
 
 @Entity("users")
 export class UsersSchemaPostgres {
@@ -27,6 +28,12 @@ export class UsersSchemaPostgres {
         default: () => "CURRENT_TIMESTAMP",
     })
     public readonly last_login_date?: Date;
+
+    @OneToMany(
+        () => MovieTheaterImageSchemaPostgres,
+        (movieTheaterImage) => movieTheaterImage.authorId
+    )
+    public readonly movieTheaterImages: MovieTheaterImageSchemaPostgres[];
 
     constructor(
         id: string | null,
