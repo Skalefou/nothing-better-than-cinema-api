@@ -8,6 +8,7 @@ import { Users } from "../../../users/domain/entities/users.entity";
 import { AttachUserGuard } from "../../../auth/presentation/guards/attach-user.guard";
 import { CreateMovieTheaterDTO } from "../dtos/createMovieTheater.dto";
 import { CreateMovieTheaterUseCase } from "../../application/use-cases/create-movie-theater.use-case";
+import { MovieTheater } from "src/movieTheater/domain/entities/movieTheater.entity";
 
 @Controller("movie-theater")
 export class MovieTheaterController {
@@ -19,8 +20,14 @@ export class MovieTheaterController {
     async createMovieTheater(
         @AttachUser() user: Users,
         @Body() createMovieTheaterInput: CreateMovieTheaterDTO
-    ): Promise<void> {
-        const a = 5;
-        console.log(user, a);
+    ): Promise<MovieTheater> {
+        return await this.createMovieTheaterUsecase.execute(
+            createMovieTheaterInput.name,
+            createMovieTheaterInput.description,
+            createMovieTheaterInput.type,
+            createMovieTheaterInput.capacity,
+            createMovieTheaterInput.disabledAccess,
+            [],
+            user.id
     }
 }
