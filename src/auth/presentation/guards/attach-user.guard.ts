@@ -20,7 +20,6 @@ export class AttachUserGuard implements CanActivate {
 
         try {
             request.user = await this.authService.validateAndAttachUser(tokenUser.id);
-            console.log("User attached:", request.user);
             return true;
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {

@@ -8,7 +8,7 @@ export class MovieTheaterImageSchemaPostgres {
 
     @ManyToOne(() => UsersSchemaPostgres, (user) => user.movieTheaterImages, { nullable: false })
     @JoinColumn({ name: "author_id" })
-    public readonly author: UsersSchemaPostgres;
+    public readonly authorId: UsersSchemaPostgres;
 
     @Column({ type: "varchar", length: 512, nullable: false })
     public readonly url: string;
@@ -31,7 +31,7 @@ export class MovieTheaterImageSchemaPostgres {
         if (id) {
             this.id = id;
         }
-        this.author = author;
+        this.authorId = author;
         this.url = url;
         this.publicationDate = publicationDate ? new Date(publicationDate) : new Date();
     }

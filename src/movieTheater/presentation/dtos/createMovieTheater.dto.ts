@@ -1,4 +1,4 @@
-import { IsBoolean, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsBoolean, IsInt, IsNotEmpty, IsString, Min } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateMovieTheaterDTO {
@@ -18,7 +18,8 @@ export class CreateMovieTheaterDTO {
     type: string;
 
     @IsNotEmpty()
-    @IsNumber()
+    @IsInt()
+    @Min(1)
     @ApiProperty({ example: "Science Fiction" })
     capacity: number;
 
