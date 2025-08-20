@@ -16,8 +16,15 @@ import { Users } from "../../../users/domain/entities/users.entity";
 import { AttachUserGuard } from "../../../auth/presentation/guards/attach-user.guard";
 import { CreateMovieTheaterDTO } from "../dtos/createMovieTheater.dto";
 import { CreateMovieTheaterUseCase } from "../../application/use-cases/create-movie-theater.use-case";
-import { MovieTheater } from "src/movieTheater/domain/entities/movieTheater.entity";
 import { FilesInterceptor } from "@nestjs/platform-express";
+import { diskStorage } from "multer";
+import { existsSync, mkdirSync } from "fs";
+import { join, extname } from "path";
+
+const uploadDir = join(process.cwd(), "uploads");
+if (!existsSync(uploadDir)) {
+    mkdirSync(uploadDir, { recursive: true });
+}
 
 @Controller("movie-theater")
 export class MovieTheaterController {
@@ -26,16 +33,35 @@ export class MovieTheaterController {
     @Post()
     @UseGuards(JwtAuthGuard, AttachUserGuard, RolesGuard)
     @Roles(Role.Admin)
-    @UseInterceptors(FilesInterceptor("images", 10))
+    @UseInterceptors(
+        FilesInterceptor("images", 10, {
+            storage: diskStorage({
+                destination: (_req, _file, cb) => cb(null, uploadDir),
+                filename: (_req, file, cb) => {
+                    const ext = extname(file.originalname) || "";
+                    cb(null, `${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`);
+                },
+            }),
+            fileFilter: (_req, file, cb) => {
+                const ok = ["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(
+                    file.mimetype
+                );
+                cb(ok ? null : new Error("Only images (jpeg/jpg/png/webp) are allowed"), ok);
+            },
+            limits: { fileSize: 5 * 1024 * 1024, files: 10 },
+        })
+    )
     async createMovieTheater(
         @AttachUser() user: Users,
         @Body() createMovieTheaterInput: CreateMovieTheaterDTO,
         @UploadedFiles() files: Express.Multer.File[]
     ): Promise<void> {
-        console.log("kkakaka");
         if (!user.id) {
             throw new UnauthorizedException("No user found");
         }
+
+        const url = files.map((file) => `${process.env.BASE_FILES_URL}/uploads/${file.filename}`);
+        console.log(url);
 
         return await this.createMovieTheaterUsecase.execute(
             createMovieTheaterInput.name,

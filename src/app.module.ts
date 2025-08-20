@@ -7,8 +7,10 @@ import { AuthModule } from "./auth/auth.module";
 import { MovieTheaterModule } from "./movieTheater/movieTheater.module";
 import { MulterModule } from "@nestjs/platform-express";
 import { diskStorage } from "multer";
-import * as path from "node:path";
-import * as process from "node:process";
+import { extname, join } from "node:path";
+import { ServeStaticModule } from "@nestjs/serve-static";
+
+const uploadDir = join(process.cwd(), "uploads");
 
 @Module({
     imports: [
@@ -30,30 +32,12 @@ import * as process from "node:process";
                 autoLoadEntities: true,
             }),
         }),
-        MulterModule.registerAsync({
-            imports: [ConfigModule],
-            inject: [ConfigService],
-            useFactory: (cfg: ConfigService) => {
-                const dir = cfg.get<string>("UPLOADS_DIR", "uploads");
-                return {
-                    storage: diskStorage({
-                        destination: path.join(process.cwd(), dir),
-                        filename: (
-                            req: Express.Request,
-                            file: Express.Multer.File,
-                            cb: (error: Error | null, filename: string) => void
-                        ) => {
-                            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                            const filename = `${Date.now()}-${file.originalname}`;
-                            cb(null, filename);
-                        },
-                    }),
-                    limits: {
-                        fileSize: (cfg.get<number>("MAX_IMAGE_SIZE_MB") ?? 10) * 1024 * 1024,
-                    },
-                };
-            },
+
+        ServeStaticModule.forRoot({
+            rootPath: join(process.cwd(), "uploads"),
+            serveRoot: "/uploads",
         }),
+
         MovieModule,
         UsersModule,
         MovieTheaterModule,

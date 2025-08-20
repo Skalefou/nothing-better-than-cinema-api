@@ -2,9 +2,16 @@ import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { ConfigService } from "@nestjs/config";
 import { ValidationPipe } from "@nestjs/common";
+import { join } from "node:path";
+import { existsSync, mkdirSync } from "fs";
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
+    const uploadDir = join(process.cwd(), "uploads");
+    if (!existsSync(uploadDir)) {
+        mkdirSync(uploadDir);
+    }
+
     app.useGlobalPipes(
         new ValidationPipe({
             transform: true,
