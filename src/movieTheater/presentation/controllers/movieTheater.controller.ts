@@ -8,7 +8,7 @@ import {
     UseInterceptors,
 } from "@nestjs/common";
 import { Roles } from "../../../auth/presentation/decorators/roles.decorator";
-import { Role } from "../../../users/domain/entities/roles.enum";
+import { RoleActor } from "../../../commons/enum/roles.enum";
 import { JwtAuthGuard } from "../../../auth/presentation/guards/jwt-auth.guard";
 import { RolesGuard } from "../../../auth/presentation/guards/roles.guard";
 import { AttachUser } from "../../../auth/presentation/decorators/attach-user.decorator";
@@ -20,6 +20,7 @@ import { FilesInterceptor } from "@nestjs/platform-express";
 import { diskStorage } from "multer";
 import { existsSync, mkdirSync } from "fs";
 import { join, extname } from "path";
+import {ActorContext} from "../../application/contexts/actor.context";
 
 const uploadDir = join(process.cwd(), "uploads");
 if (!existsSync(uploadDir)) {
@@ -32,7 +33,7 @@ export class MovieTheaterController {
 
     @Post()
     @UseGuards(JwtAuthGuard, AttachUserGuard, RolesGuard)
-    @Roles(Role.Admin)
+    @Roles(RoleActor.Admin)
     @UseInterceptors(
         FilesInterceptor("images", 10, {
             storage: diskStorage({
@@ -60,8 +61,14 @@ export class MovieTheaterController {
             throw new UnauthorizedException("No user found");
         }
 
-        const url = files.map((file) => `${process.env.BASE_FILES_URL}/uploads/${file.filename}`);
-        console.log(url);
+        const imageUrls = files.map(
+            (file) => `${process.env.BASE_FILES_URL}/uploads/${file.filename}`
+        );
+
+        const actor: ActorContext = {
+            id: user.id,
+            roles: user.role,
+        };
 
         return await this.createMovieTheaterUsecase.execute(
             createMovieTheaterInput.name,
@@ -69,8 +76,8 @@ export class MovieTheaterController {
             createMovieTheaterInput.type,
             createMovieTheaterInput.capacity,
             createMovieTheaterInput.disabledAccess,
-            [],
-            user.id
+            imageUrls,
+            actor
         );
     }
 }

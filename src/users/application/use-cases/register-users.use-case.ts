@@ -10,7 +10,7 @@ import {
 } from "../../domain/services/HashPassword.services";
 import { JwtTokenService } from "src/auth/application/services/jwt-token.service";
 import { CreatingUserException } from "../../domain/exceptions/CreatingUser.exception";
-import { Role } from "src/users/domain/entities/roles.enum";
+import { RoleActor } from "src/commons/enum/roles.enum";
 
 @Injectable()
 export class RegisterUsersUseCase {
@@ -56,7 +56,7 @@ export class RegisterUsersUseCase {
 
         const hashedPassword = await this.hashPasswordService.hashPassword(password);
 
-        const user = new Users(null, email, [Role.Users], hashedPassword, undefined, undefined);
+        const user = new Users(null, email, [RoleActor.Users], hashedPassword, undefined, undefined);
         const newUser = await this.usersRepository.create(user);
         if (!newUser.id) {
             throw new CreatingUserException();

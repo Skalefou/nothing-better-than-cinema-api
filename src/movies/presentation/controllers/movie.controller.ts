@@ -5,7 +5,7 @@ import { CreateMovieDTO } from "../dtos/create-movie.dto";
 import { RolesGuard } from "../../../auth/presentation/guards/roles.guard";
 import { JwtAuthGuard } from "../../../auth/presentation/guards/jwt-auth.guard";
 import { Roles } from "../../../auth/presentation/decorators/roles.decorator";
-import { Role } from "../../../users/domain/entities/roles.enum";
+import { RoleActor } from "../../../commons/enum/roles.enum";
 import { DeleteMovieUsecase } from "../../application/use-cases/delete-movie.usecase";
 import { UpdateMovieUsecase } from "../../application/use-cases/update-movie.usecase";
 
@@ -19,7 +19,7 @@ export class MovieController {
 
     @Post()
     @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles(Role.Admin)
+    @Roles(RoleActor.Admin)
     async createMovie(@Body() createMovieInput: CreateMovieDTO): Promise<Movie> {
         return await this.createMovieUsecase.execute(
             createMovieInput.title,
@@ -32,14 +32,14 @@ export class MovieController {
 
     @Delete(":id")
     @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles(Role.Admin)
+    @Roles(RoleActor.Admin)
     async deleteMovie(@Param("id") id: string): Promise<void> {
         await this.deleteMovieUsecase.execute(id);
     }
 
     @Put(":id")
     @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles(Role.Admin)
+    @Roles(RoleActor.Admin)
     async updateMovie(
         @Param("id") id: string,
         @Body() updateMovieInput: CreateMovieDTO
