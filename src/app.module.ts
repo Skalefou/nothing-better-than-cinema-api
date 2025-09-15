@@ -5,12 +5,8 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { UsersModule } from "./users/users.module";
 import { AuthModule } from "./auth/auth.module";
 import { MovieTheaterModule } from "./movieTheater/movieTheater.module";
-import { MulterModule } from "@nestjs/platform-express";
-import { diskStorage } from "multer";
-import { extname, join } from "node:path";
+import { join } from "node:path";
 import { ServeStaticModule } from "@nestjs/serve-static";
-
-const uploadDir = join(process.cwd(), "uploads");
 
 @Module({
     imports: [

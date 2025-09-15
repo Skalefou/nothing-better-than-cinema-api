@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import { MovieTheaterImageSchemaPostgres } from "./movieTheater-image.schema-postgres";
 
 @Entity("movie_theater")
 export class MovieTheaterSchemaPostgres {
@@ -20,6 +21,11 @@ export class MovieTheaterSchemaPostgres {
     @Column({ type: "boolean", default: false })
     public readonly disabledAccess: boolean;
 
+    @OneToMany(() => MovieTheaterImageSchemaPostgres, (image) => image.movieTheater, {
+        cascade: true,
+    })
+    public readonly images: MovieTheaterImageSchemaPostgres[];
+
     constructor(
         id: string | null,
         name: string,
@@ -28,9 +34,7 @@ export class MovieTheaterSchemaPostgres {
         capacity: number,
         disabledAccess: boolean = false
     ) {
-        if (id) {
-            this.id = id;
-        }
+        if (id) this.id = id;
         this.name = name;
         this.description = description;
         this.type = type;

@@ -56,7 +56,14 @@ export class RegisterUsersUseCase {
 
         const hashedPassword = await this.hashPasswordService.hashPassword(password);
 
-        const user = new Users(null, email, [RoleActor.Users], hashedPassword, undefined, undefined);
+        const user = new Users(
+            null,
+            email,
+            [RoleActor.Users],
+            hashedPassword,
+            undefined,
+            undefined
+        );
         const newUser = await this.usersRepository.create(user);
         if (!newUser.id) {
             throw new CreatingUserException();

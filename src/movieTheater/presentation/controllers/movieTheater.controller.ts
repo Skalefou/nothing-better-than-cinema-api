@@ -20,7 +20,8 @@ import { FilesInterceptor } from "@nestjs/platform-express";
 import { diskStorage } from "multer";
 import { existsSync, mkdirSync } from "fs";
 import { join, extname } from "path";
-import {ActorContext} from "../../application/contexts/actor.context";
+import { ActorContext } from "../../application/contexts/actor.context";
+import { MovieTheater } from "../../domain/entities/movieTheater.entity";
 
 const uploadDir = join(process.cwd(), "uploads");
 if (!existsSync(uploadDir)) {
@@ -56,7 +57,7 @@ export class MovieTheaterController {
         @AttachUser() user: Users,
         @Body() createMovieTheaterInput: CreateMovieTheaterDTO,
         @UploadedFiles() files: Express.Multer.File[]
-    ): Promise<void> {
+    ): Promise<MovieTheater> {
         if (!user.id) {
             throw new UnauthorizedException("No user found");
         }

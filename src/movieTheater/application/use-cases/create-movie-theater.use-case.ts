@@ -1,14 +1,23 @@
-import {Injectable} from "@nestjs/common";
-import {ActorContext} from "../contexts/actor.context";
-import {RoleActor} from "../../../commons/enum/roles.enum";
-import {FieldInvalidException} from "../../domain/exceptions/fieldInvalid.exception";
-import {UnauthorizedActorException} from "../../domain/exceptions/unauthorized-actor.exception";
-import {MovieTheaterImage} from "../../domain/entities/movieTheater-image.entity";
-import {MovieTheater} from "../../domain/entities/movieTheater.entity";
-import {TooMuchImagesException} from "../../domain/exceptions/tooMuchImages.exception";
+import { Inject, Injectable } from "@nestjs/common";
+import { ActorContext } from "../contexts/actor.context";
+import { RoleActor } from "../../../commons/enum/roles.enum";
+import { FieldInvalidException } from "../../domain/exceptions/fieldInvalid.exception";
+import { UnauthorizedActorException } from "../../domain/exceptions/unauthorized-actor.exception";
+import { MovieTheaterImage } from "../../domain/entities/movieTheater-image.entity";
+import { MovieTheater } from "../../domain/entities/movieTheater.entity";
+import { TooMuchImagesException } from "../../domain/exceptions/tooMuchImages.exception";
+import {
+    MOVIE_THEATER_REPOSITORY,
+    MovieTheaterRepository,
+} from "../../domain/repositories/movieTheater.repository";
 
 @Injectable()
 export class CreateMovieTheaterUseCase {
+    constructor(
+        @Inject(MOVIE_THEATER_REPOSITORY)
+        private readonly movieTheaterRepository: MovieTheaterRepository
+    ) {}
+
     private verifyValidtyMovieTheater(
         name: string,
         description: string,
@@ -48,7 +57,7 @@ export class CreateMovieTheaterUseCase {
         disabledAccess: boolean,
         imagesUrl: string[],
         actor: ActorContext
-    ): Promise<void> {
+    ): Promise<MovieTheater> {
         this.verifyValidtyMovieTheater(name, description, type, capacity, actor);
 
         if (imagesUrl.length > 10) {
@@ -68,5 +77,9 @@ export class CreateMovieTheaterUseCase {
             disabledAccess,
             movieTheaterImage
         );
+
+        return await this.movieTheaterRepository.create(movieTheater);
+
+        //console.log(movieTheater);
     }
 }

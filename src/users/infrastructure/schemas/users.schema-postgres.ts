@@ -31,7 +31,7 @@ export class UsersSchemaPostgres {
 
     @OneToMany(
         () => MovieTheaterImageSchemaPostgres,
-        (movieTheaterImage) => movieTheaterImage.authorId
+        (movieTheaterImage) => movieTheaterImage.author
     )
     public readonly movieTheaterImages: MovieTheaterImageSchemaPostgres[];
 
