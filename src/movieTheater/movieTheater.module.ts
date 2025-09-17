@@ -8,6 +8,7 @@ import { MovieTheaterSchemaPostgres } from "./infrastructure/schemas/movieTheate
 import { MOVIE_THEATER_REPOSITORY } from "./domain/repositories/movieTheater.repository";
 import { MovieTheaterPostgresRepository } from "./infrastructure/repositories/movieTheater.postgres-repository";
 import { DeleteMovieTheaterUseCase } from "./application/use-cases/delete-movie-theater.use-case";
+import {UpdateMovieTheaterUseCase} from "./application/use-cases/update-movie-theater.use-case";
 
 @Module({
     imports: [
@@ -19,6 +20,7 @@ import { DeleteMovieTheaterUseCase } from "./application/use-cases/delete-movie-
     providers: [
         CreateMovieTheaterUseCase,
         DeleteMovieTheaterUseCase,
+        UpdateMovieTheaterUseCase,
         {
             provide: MOVIE_THEATER_REPOSITORY,
             useClass: MovieTheaterPostgresRepository,

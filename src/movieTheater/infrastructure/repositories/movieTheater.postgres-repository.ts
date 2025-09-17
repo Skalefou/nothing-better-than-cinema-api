@@ -20,6 +20,29 @@ export class MovieTheaterPostgresRepository implements MovieTheaterRepository {
         private readonly movieTheaterImageRepository: Repository<MovieTheaterImageSchemaPostgres>
     ) {}
 
+    async findById(id: string): Promise<MovieTheater | null> {
+        const entity = await this.movieTheaterRepository.findOne({
+            where: { id },
+            relations: ["images"]
+        });
+        if (!entity) return null;
+        return MovieTheaterMapper.toDomain(entity);
+    }
+
+    async update(movieTheater: MovieTheater): Promise<MovieTheater> {
+        const entity = MovieTheaterMapper.toPersistemnce(movieTheater);
+        if (movieTheater.images && movieTheater.images.length > 0) {
+            const images = movieTheater.images.map((img) => {
+                const authorEntity = new UsersSchemaPostgres(img.author, "", [], null);
+                return MovieTheaterImageMapper.toPersistence(img, authorEntity, entity);
+            });
+            (entity as unknown as { images: typeof images }).images = images;
+        }
+        // Sauvegarde de l'entité (TypeORM gère l'update et le cascade)
+        const saved = await this.movieTheaterRepository.save(entity);
+        return MovieTheaterMapper.toDomain(saved);
+    }
+
     async delete(id: string): Promise<number> {
         const result = await this.movieTheaterRepository.delete(id);
         return result.affected || 0;

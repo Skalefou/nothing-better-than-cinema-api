@@ -3,7 +3,7 @@ import {
     Controller,
     Delete,
     Param,
-    Post,
+    Post, Put,
     UnauthorizedException,
     UploadedFiles,
     UseGuards,
@@ -16,7 +16,7 @@ import { RolesGuard } from "../../../auth/presentation/guards/roles.guard";
 import { AttachUser } from "../../../auth/presentation/decorators/attach-user.decorator";
 import { Users } from "../../../users/domain/entities/users.entity";
 import { AttachUserGuard } from "../../../auth/presentation/guards/attach-user.guard";
-import { CreateMovieTheaterDTO } from "../dtos/createMovieTheater.dto";
+import { CreateUpdateMovieTheaterDTO } from "../dtos/createUpdateMovieTheaterDTO";
 import { CreateMovieTheaterUseCase } from "../../application/use-cases/create-movie-theater.use-case";
 import { FilesInterceptor } from "@nestjs/platform-express";
 import { diskStorage } from "multer";
@@ -25,6 +25,7 @@ import { join, extname } from "path";
 import { ActorContext } from "../../application/contexts/actor.context";
 import { MovieTheater } from "../../domain/entities/movieTheater.entity";
 import { DeleteMovieTheaterUseCase } from "../../application/use-cases/delete-movie-theater.use-case";
+import {UpdateMovieTheaterUseCase} from "../../application/use-cases/update-movie-theater.use-case";
 
 const uploadDir = join(process.cwd(), "uploads");
 if (!existsSync(uploadDir)) {
@@ -35,7 +36,8 @@ if (!existsSync(uploadDir)) {
 export class MovieTheaterController {
     constructor(
         private readonly createMovieTheaterUsecase: CreateMovieTheaterUseCase,
-        private readonly deleteMovieTheaterUseCase: DeleteMovieTheaterUseCase
+        private readonly deleteMovieTheaterUseCase: DeleteMovieTheaterUseCase,
+        private readonly updateMovieTheaterUseCase: UpdateMovieTheaterUseCase
     ) {}
 
     @Post()
@@ -61,7 +63,7 @@ export class MovieTheaterController {
     )
     async createMovieTheater(
         @AttachUser() user: Users,
-        @Body() createMovieTheaterInput: CreateMovieTheaterDTO,
+        @Body() createMovieTheaterInput: CreateUpdateMovieTheaterDTO,
         @UploadedFiles() files: Express.Multer.File[]
     ): Promise<MovieTheater> {
         if (!user.id) {
@@ -93,5 +95,57 @@ export class MovieTheaterController {
     @Roles(RoleActor.Admin)
     async deleteMovieTheater(@Param("id") id: string): Promise<void> {
         return await this.deleteMovieTheaterUseCase.execute(id);
+    }
+
+    @Put("/:id")
+    @UseInterceptors(
+        FilesInterceptor("images", 10, {
+            storage: diskStorage({
+                destination: (_req, _file, cb) => cb(null, uploadDir),
+                filename: (_req, file, cb) => {
+                    const ext = extname(file.originalname) || "";
+                    cb(null, `${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`);
+                },
+            }),
+            fileFilter: (_req, file, cb) => {
+                const ok = ["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(
+                    file.mimetype
+                );
+                cb(ok ? null : new Error("Only images (jpeg/jpg/png/webp) are allowed"), ok);
+            },
+            limits: { fileSize: 5 * 1024 * 1024, files: 10 },
+        })
+    )
+    @UseGuards(JwtAuthGuard, AttachUserGuard, RolesGuard)
+    @Roles(RoleActor.Admin)
+    async updateMovieTheater(
+        @Param("id") id: string,
+        @AttachUser() user: Users,
+        @Body() updateMovieTheaterInput: CreateUpdateMovieTheaterDTO,
+        @UploadedFiles() files: Express.Multer.File[]
+    ): Promise<MovieTheater> {
+        if (!user.id) {
+            throw new UnauthorizedException("No user found");
+        }
+
+        const imageUrls = files.map(
+            (file) => `${process.env.BASE_FILES_URL}/uploads/${file.filename}`
+        );
+
+        const actor: ActorContext = {
+            id: user.id,
+            roles: user.role,
+        };
+
+        return await this.updateMovieTheaterUseCase.execute(
+            id,
+            updateMovieTheaterInput.name,
+            updateMovieTheaterInput.description,
+            updateMovieTheaterInput.type,
+            updateMovieTheaterInput.capacity,
+            updateMovieTheaterInput.disabledAccess,
+            imageUrls,
+            actor
+        );
     }
 }
