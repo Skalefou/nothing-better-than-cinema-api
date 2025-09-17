@@ -8,9 +8,10 @@ import { MovieTheater } from "../../domain/entities/movieTheater.entity";
 import { MovieTheaterMapper } from "../mappers/movieTheater.mapper";
 import { UsersSchemaPostgres } from "../../../users/infrastructure/schemas/users.schema-postgres";
 import { MovieTheaterImageMapper } from "../mappers/movieTheater-image.mapper";
+import { MovieTheaterRepository } from "../../domain/repositories/movieTheater.repository";
 
 @Injectable()
-export class MovieTheaterPostgresRepository {
+export class MovieTheaterPostgresRepository implements MovieTheaterRepository {
     constructor(
         @InjectRepository(MovieTheaterSchemaPostgres)
         private readonly movieTheaterRepository: Repository<MovieTheaterSchemaPostgres>,
@@ -18,6 +19,11 @@ export class MovieTheaterPostgresRepository {
         @InjectRepository(MovieTheaterImageSchemaPostgres)
         private readonly movieTheaterImageRepository: Repository<MovieTheaterImageSchemaPostgres>
     ) {}
+
+    async delete(id: string): Promise<number> {
+        const result = await this.movieTheaterRepository.delete(id);
+        return result.affected || 0;
+    }
 
     async create(movieTheater: MovieTheater): Promise<MovieTheater> {
         const entity = MovieTheaterMapper.toPersistence(movieTheater);

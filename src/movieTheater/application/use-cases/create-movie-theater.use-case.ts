@@ -79,7 +79,5 @@ export class CreateMovieTheaterUseCase {
         );
 
         return await this.movieTheaterRepository.create(movieTheater);
-
-        //console.log(movieTheater);
     }
 }

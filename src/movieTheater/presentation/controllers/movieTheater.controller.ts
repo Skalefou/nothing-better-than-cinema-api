@@ -1,6 +1,8 @@
 import {
     Body,
     Controller,
+    Delete,
+    Param,
     Post,
     UnauthorizedException,
     UploadedFiles,
@@ -22,6 +24,7 @@ import { existsSync, mkdirSync } from "fs";
 import { join, extname } from "path";
 import { ActorContext } from "../../application/contexts/actor.context";
 import { MovieTheater } from "../../domain/entities/movieTheater.entity";
+import { DeleteMovieTheaterUseCase } from "../../application/use-cases/delete-movie-theater.use-case";
 
 const uploadDir = join(process.cwd(), "uploads");
 if (!existsSync(uploadDir)) {
@@ -30,7 +33,10 @@ if (!existsSync(uploadDir)) {
 
 @Controller("movie-theater")
 export class MovieTheaterController {
-    constructor(private readonly createMovieTheaterUsecase: CreateMovieTheaterUseCase) {}
+    constructor(
+        private readonly createMovieTheaterUsecase: CreateMovieTheaterUseCase,
+        private readonly deleteMovieTheaterUseCase: DeleteMovieTheaterUseCase
+    ) {}
 
     @Post()
     @UseGuards(JwtAuthGuard, AttachUserGuard, RolesGuard)
@@ -80,5 +86,12 @@ export class MovieTheaterController {
             imageUrls,
             actor
         );
+    }
+
+    @Delete("/:id")
+    @UseGuards(JwtAuthGuard, AttachUserGuard, RolesGuard)
+    @Roles(RoleActor.Admin)
+    async deleteMovieTheater(@Param("id") id: string): Promise<void> {
+        return await this.deleteMovieTheaterUseCase.execute(id);
     }
 }
